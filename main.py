@@ -8,4 +8,4 @@ app.include_router(tasks_router)
 
 @app.get("/")
 def root():
-    return {"message": "Todo API работает"}
+    return {"message": "работает"}
