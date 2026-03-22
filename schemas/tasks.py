@@ -11,13 +11,10 @@ class TaskCreate(BaseModel):
     @classmethod
     def validate_title(cls, value: str) -> str:
         value = value.strip()
-
         if len(value) < 3:
             raise ValueError("Заголовок должен быть не короче 3 символов")
-
         if len(value) > 100:
             raise ValueError("Заголовок должен быть не длиннее 100 символов")
-
         return value
 
 
@@ -31,15 +28,11 @@ class TaskUpdate(BaseModel):
     def validate_title(cls, value: Optional[str]) -> Optional[str]:
         if value is None:
             return value
-
         value = value.strip()
-
         if len(value) < 3:
             raise ValueError("Заголовок должен быть не короче 3 символов")
-
         if len(value) > 100:
             raise ValueError("Заголовок должен быть не длиннее 100 символов")
-
         return value
 
 
@@ -48,3 +41,6 @@ class TaskResponse(BaseModel):
     title: str
     description: Optional[str]
     is_done: bool
+
+    class Config:
+        from_attributes = True

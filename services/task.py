@@ -1,50 +1,30 @@
+from sqlalchemy.orm import Session
 from schemas.tasks import TaskCreate, TaskUpdate
-
-tasks_db: dict[int, dict] = {}
-next_id: int = 1
+import repositories.task as task_repo
 
 
-def create_task(task: TaskCreate) -> dict:
-    global next_id
-
-    new_task = {
-        "id": next_id,
-        "title": task.title,
-        "description": task.description,
-        "is_done": task.is_done,
-    }
-
-    tasks_db[next_id] = new_task
-    next_id += 1
-
-    return new_task
+def get_all(db: Session, owner_id: int):
+    return task_repo.get_all(db, owner_id)
 
 
-def get_all_tasks() -> list:
-    return list(tasks_db.values())
+def get_by_id(db: Session, task_id: int, owner_id: int):
+    return task_repo.get_by_id(db, task_id, owner_id)
 
 
-def get_task_by_id(task_id: int) -> dict | None:
-    return tasks_db.get(task_id)
+def create(db: Session, task: TaskCreate, owner_id: int):
+    return task_repo.create(db, task, owner_id)
 
 
-def update_task(task_id: int, updated_data: TaskUpdate) -> dict | None:
-    task = tasks_db.get(task_id)
-
+def update(db: Session, task_id: int, updated_data: TaskUpdate, owner_id: int):
+    task = task_repo.get_by_id(db, task_id, owner_id)
     if task is None:
         return None
-
-    changes = updated_data.model_dump(exclude_unset=True)
-    task.update(changes)
-
-    return task
+    return task_repo.update(db, task, updated_data)
 
 
-def delete_task(task_id: int) -> bool:
-    task = tasks_db.get(task_id)
-
+def delete(db: Session, task_id: int, owner_id: int) -> bool:
+    task = task_repo.get_by_id(db, task_id, owner_id)
     if task is None:
         return False
-
-    del tasks_db[task_id]
+    task_repo.delete(db, task)
     return True
