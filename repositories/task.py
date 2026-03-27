@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from models.task import Task
-from schemas.tasks import TaskCreate, TaskUpdate
+from schemas.task import TaskCreate, TaskUpdate
 
 
 def get_all(db: Session, owner_id: int) -> list[Task]:

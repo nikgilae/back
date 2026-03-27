@@ -13,3 +13,4 @@ class Task(Base):
     owner_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
 
     owner: Mapped["User"] = relationship(back_populates="tasks")
+    comments: Mapped[list["Comment"]] = relationship(back_populates="task", cascade="all, delete-orphan")

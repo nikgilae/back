@@ -1,4 +1,4 @@
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, field_validator, ConfigDict
 from typing import Optional
 
 
@@ -42,5 +42,4 @@ class TaskResponse(BaseModel):
     description: Optional[str]
     is_done: bool
 
-    class Config:
-        from_attributes = True
+model_config = ConfigDict(from_attributes=True)
