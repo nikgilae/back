@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta, UTC
 from jose import jwt
 from passlib.context import CryptContext
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 import repositories.user as user_repo
 
@@ -34,16 +34,16 @@ def decode_token(token: str) -> int | None:
         return None
 
 
-def register(db: Session, username: str, password: str):
-    existing = user_repo.get_by_username(db, username)
+async def register(db: AsyncSession, username: str, password: str):
+    existing = await user_repo.get_by_username(db, username)
     if existing:
         return None
     hashed = hash_password(password)
-    return user_repo.create(db, username, hashed)
+    return await user_repo.create(db, username, hashed)
 
 
-def login(db: Session, username: str, password: str) -> str | None:
-    user = user_repo.get_by_username(db, username)
+async def login(db: AsyncSession, username: str, password: str) -> str | None:
+    user = await user_repo.get_by_username(db, username)
     if not user:
         return None
     if not verify_password(password, user.hashed_password):

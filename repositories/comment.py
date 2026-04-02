@@ -1,19 +1,21 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 from models.comment import Comment
 from schemas.comment import CommentCreate
 
 
-def get_all(db: Session, task_id: int) -> list[Comment]:
-    return db.query(Comment).filter(Comment.task_id == task_id).all()
+async def get_all(db: AsyncSession, task_id: int) -> list[Comment]:
+    result = await db.execute(select(Comment).where(Comment.task_id == task_id))
+    return result.scalars().all()
 
 
-def create(db: Session, data: CommentCreate, task_id: int, author_id: int) -> Comment:
+async def create(db: AsyncSession, data: CommentCreate, task_id: int, author_id: int) -> Comment:
     comment = Comment(
         content=data.content,
         task_id=task_id,
         author_id=author_id,
     )
     db.add(comment)
-    db.commit()
-    db.refresh(comment)
+    await db.commit()
+    await db.refresh(comment)
     return comment
